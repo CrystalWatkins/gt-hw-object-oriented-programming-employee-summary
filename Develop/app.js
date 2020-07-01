@@ -33,3 +33,99 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+const questions = [
+    {
+        type: "input",
+        message: "What is your name?",
+        name: "name",
+    },
+    {
+        type: "input",
+        message: "What is your email address?",
+        name: "email",
+    },
+    {
+        type: "input",
+        message: "What if your id?",
+        name: "id?",
+    },
+    {
+        type: "list",
+        message: "What role are you?",
+        name: "officeRole",
+        choices: ["manager", "engineer", "intern"]
+    },
+]
+
+let informationCollected 
+
+inquirer.prompt(questions).then(function(data){
+informationCollected = data
+if (questions.choices === "manager") {
+    officeNumber().then(function(data){
+        console.log(data)
+        informationCollected.officeNumber = data.officeNumber
+        console.log(informationCollected)
+    })
+}if (questions.choices = "engineer") {
+    github().then(function(data){
+        console.log(data)
+        informationCollected.github = data.officeNumber
+        console.log(informationCollected)
+    })
+}if (questions.choices = "intern") {
+    school().then(function(data){
+        console.log(data)
+        informationCollected.school = data.officeNumber
+        console.log(informationCollected)
+    })
+}
+  
+    // run final question add another?
+    // create html use writeFile method 
+    // fs.writeFile("type", "name", cb)
+
+// lastQuestion();
+})
+
+
+
+function officeNumber(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "What is your office number?",
+            name: "officeNumber",
+        }
+    ])
+}
+function school(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "What school are you from?",
+            name: "school",
+        }
+    ])
+}
+function github(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "What is your github username?",
+            name: "github",
+        }
+    ])
+}
+
+
+// function lastQuestion(){
+//     return inquirer.prompt([
+//     {
+//         type: "confirm",
+//         massage: "Do you want to add another employee?",
+//         name: "exit"
+//     }
+//     ])
+// }

@@ -14,10 +14,9 @@ class Employee {
     getEmail(){
         return this.email
     }
-    // getRole() {
-    //     return this.employee(function(Employee){
-    //         return Employee;
-    //     });
-    // }
+    getRole() {
+        return "Employee";
+    }
 }
+
 module.exports = Employee;

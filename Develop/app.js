@@ -36,96 +36,78 @@ const render = require("./lib/htmlRenderer");
 
 const questions = [
     {
+        type: "list",
+        message: "What role are you?",
+        name: "officeRole",
+        choices: ["Manager", "Engineer", "Intern"]
+    },
+    {
         type: "input",
         message: "What is your name?",
         name: "name",
     },
     {
         type: "input",
-        message: "What is your email address?",
+        message: "What is your id?",
+        name: "id",
+    },
+    {
+        type: "input",
+        message: "What if your email?",
         name: "email",
     },
     {
         type: "input",
-        message: "What if your id?",
-        name: "id?",
+        message: "What is your office number?",
+        name: "officeNumber",
+        when: (response) => response.officeRole === "Manager"
     },
     {
-        type: "list",
-        message: "What role are you?",
-        name: "officeRole",
-        choices: ["manager", "engineer", "intern"]
+        type: "input",
+        message: "What school are you from?",
+        name: "school",
+        when: (response) => response.officeRole === "Intern"
     },
+    {
+        type: "input",
+        message: "What is your github username?",
+        name: "github",
+        when: (response) => response.officeRole === "Engineer"
+    },
+    {
+        type: "confirm",
+        message: "Do you want to add another employee?",
+        name: "done",
+    }
 ]
 
-let informationCollected 
+const employees = [];
 
-inquirer.prompt(questions).then(function(data){
-informationCollected = data
-if (questions.choices === "manager") {
-    officeNumber().then(function(data){
-        console.log(data)
-        informationCollected.officeNumber = data.officeNumber
-        console.log(informationCollected)
-    })
-}if (questions.choices = "engineer") {
-    github().then(function(data){
-        console.log(data)
-        informationCollected.github = data.officeNumber
-        console.log(informationCollected)
-    })
-}if (questions.choices = "intern") {
-    school().then(function(data){
-        console.log(data)
-        informationCollected.school = data.officeNumber
-        console.log(informationCollected)
-    })
-}
-  
-    // run final question add another?
-    // create html use writeFile method 
-    // fs.writeFile("type", "name", cb)
+const init = () => {
+    inquirer.prompt(questions).then(questionAnswers);
+};
 
-// lastQuestion();
-})
+const questionAnswers = (response) => {
+    let employee;
+    if(response.officeRole === "Manager") {
+        employee = new Manager(response.name, response.id, response.email, response.officeNumber);
+    }else if(response.officeRole === "Engineer") {
+        employee = new Engineer(response.name, response.id, response.email, response.github);
+    }else if(response.officeRole === "Intern") {
+        employee = new Intern(response.name, response.id, response.email, response.school);
+    }
+
+    employees.push(employee);
+
+    if (response.done) return init();
+
+    fs.writeFile(outputPath, render(employees), function (err) {
+      if (err) {
+        return console.log(err);
+      }
+      console.log("Yay! Open your Output Folder");
+    });
+};
 
 
-
-function officeNumber(){
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "What is your office number?",
-            name: "officeNumber",
-        }
-    ])
-}
-function school(){
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "What school are you from?",
-            name: "school",
-        }
-    ])
-}
-function github(){
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "What is your github username?",
-            name: "github",
-        }
-    ])
-}
-
-
-// function lastQuestion(){
-//     return inquirer.prompt([
-//     {
-//         type: "confirm",
-//         massage: "Do you want to add another employee?",
-//         name: "exit"
-//     }
-//     ])
-// }
+init();

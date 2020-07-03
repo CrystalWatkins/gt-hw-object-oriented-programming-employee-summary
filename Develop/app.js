@@ -33,3 +33,96 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+function confirmNumbers (numberInput)
+{
+    const numbers = /^[0-9]+$/;
+    return numbers.test(parseInt(numberInput));
+};
+
+function ValidateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+const questions = [
+    {
+        type: "list",
+        message: "What role are you?",
+        name: "officeRole",
+        choices: ["Manager", "Engineer", "Intern"]
+    },
+    {
+        type: "input",
+        message: "What is your name?",
+        name: "name",
+    },
+    {
+        type: "input",
+        message: "What is your id?",
+        name: "id",
+        validate: confirmNumbers,
+    },
+    {
+        type: "input",
+        message: "What if your email?",
+        name: "email",
+        validate: ValidateEmail,
+    },
+    {
+        type: "input",
+        message: "What is your office number?",
+        name: "officeNumber",
+        validate: confirmNumbers,
+        when: (response) => response.officeRole === "Manager",
+    },
+    {
+        type: "input",
+        message: "What school are you from?",
+        name: "school",
+        when: (response) => response.officeRole === "Intern"
+    },
+    {
+        type: "input",
+        message: "What is your github username?",
+        name: "github",
+        when: (response) => response.officeRole === "Engineer"
+    },
+    {
+        type: "confirm",
+        message: "Do you want to add another employee?",
+        name: "done",
+    }
+]
+
+
+const employees = [];
+
+const allEmployees = () => {
+    inquirer.prompt(questions).then(questionAnswers);
+};
+
+const questionAnswers = (response) => {
+    let employee;
+    if(response.officeRole === "Manager") {
+        employee = new Manager(response.name, response.id, response.email, response.officeNumber);
+    }else if(response.officeRole === "Engineer") {
+        employee = new Engineer(response.name, response.id, response.email, response.github);
+    }else if(response.officeRole === "Intern") {
+        employee = new Intern(response.name, response.id, response.email, response.school);
+    }
+
+    employees.push(employee);
+
+    if (response.done) return allEmployees();
+
+    fs.writeFile(outputPath, render(employees), function (err) {
+      if (err) {
+        return console.log(err);
+      }
+      console.log("Yay! Open your Output Folder");
+    });
+};
+
+
+allEmployees();

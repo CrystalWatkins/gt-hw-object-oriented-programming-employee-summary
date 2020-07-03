@@ -1,3 +1,4 @@
+//child element of employee.
 const Employee = require("./Employee");
 
 class Engineer extends Employee{

@@ -1,4 +1,5 @@
 // TODO: Write code to define and export the Manager class. HINT: This class should inherit from Employee.
+// Child element of employee
 const Employee = require("./Employee");
 
 class Manager extends Employee{

@@ -1,4 +1,6 @@
 // TODO: Write code to define and export the Employee class
+//This is the employee class. Since it is using elements that all of the 
+//other classes use, it is the parent element in this case
 class Employee {
     constructor(name, id, email) {
         this.name = name;

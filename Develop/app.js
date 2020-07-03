@@ -34,6 +34,17 @@ const render = require("./lib/htmlRenderer");
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
 
+function confirmNumbers (numberInput)
+{
+    const numbers = /^[0-9]+$/;
+    return numbers.test(parseInt(numberInput));
+};
+
+function ValidateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
 const questions = [
     {
         type: "list",
@@ -50,17 +61,20 @@ const questions = [
         type: "input",
         message: "What is your id?",
         name: "id",
+        validate: confirmNumbers,
     },
     {
         type: "input",
         message: "What if your email?",
         name: "email",
+        validate: ValidateEmail,
     },
     {
         type: "input",
         message: "What is your office number?",
         name: "officeNumber",
-        when: (response) => response.officeRole === "Manager"
+        validate: confirmNumbers,
+        when: (response) => response.officeRole === "Manager",
     },
     {
         type: "input",
@@ -81,9 +95,10 @@ const questions = [
     }
 ]
 
+
 const employees = [];
 
-const init = () => {
+const allEmployees = () => {
     inquirer.prompt(questions).then(questionAnswers);
 };
 
@@ -99,7 +114,7 @@ const questionAnswers = (response) => {
 
     employees.push(employee);
 
-    if (response.done) return init();
+    if (response.done) return allEmployees();
 
     fs.writeFile(outputPath, render(employees), function (err) {
       if (err) {
@@ -110,4 +125,4 @@ const questionAnswers = (response) => {
 };
 
 
-init();
+allEmployees();
